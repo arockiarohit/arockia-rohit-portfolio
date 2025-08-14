@@ -1,17 +1,18 @@
 import { Canvas } from '@react-three/fiber';
-import { Float, Text3D, OrbitControls, Stars, Environment } from '@react-three/drei';
+import { Float, OrbitControls, Stars, Environment } from '@react-three/drei';
 import { useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
-// Tech Icon Component
-function TechIcon({ position, color, children, delay = 0 }: { 
+// Tech Icon Component with symbol
+function TechIcon({ position, color, symbol, delay = 0 }: { 
   position: [number, number, number]; 
   color: string; 
-  children: React.ReactNode;
+  symbol: string;
   delay?: number;
 }) {
   const meshRef = useRef<THREE.Mesh>(null);
+  const textRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
 
   useFrame((state) => {
@@ -29,34 +30,35 @@ function TechIcon({ position, color, children, delay = 0 }: {
       floatIntensity={0.5}
       position={position}
     >
-      <mesh
-        ref={meshRef}
+      <group
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
         scale={hovered ? 1.2 : 1}
       >
-        <boxGeometry args={[1.5, 1.5, 0.3]} />
-        <meshStandardMaterial 
-          color={color}
-          metalness={0.8}
-          roughness={0.2}
-          emissive={color}
-          emissiveIntensity={hovered ? 0.3 : 0.1}
-        />
-      </mesh>
-      <Text3D
-        font="/fonts/helvetiker_regular.typeface.json"
-        size={0.3}
-        height={0.1}
-        position={[-0.4, -0.2, 0.2]}
-      >
-        {children}
-        <meshStandardMaterial 
-          color="#ffffff"
-          metalness={0.5}
-          roughness={0.3}
-        />
-      </Text3D>
+        {/* Background card */}
+        <mesh ref={meshRef}>
+          <boxGeometry args={[2, 2, 0.3]} />
+          <meshStandardMaterial 
+            color={color}
+            metalness={0.8}
+            roughness={0.2}
+            emissive={color}
+            emissiveIntensity={hovered ? 0.3 : 0.1}
+          />
+        </mesh>
+        
+        {/* Symbol using basic geometry */}
+        <mesh ref={textRef} position={[0, 0, 0.2]}>
+          <cylinderGeometry args={[0.3, 0.3, 0.1, 8]} />
+          <meshStandardMaterial 
+            color="#ffffff"
+            metalness={0.5}
+            roughness={0.3}
+            emissive="#ffffff"
+            emissiveIntensity={hovered ? 0.2 : 0.05}
+          />
+        </mesh>
+      </group>
     </Float>
   );
 }
@@ -122,33 +124,13 @@ function Scene() {
       <ParticleField />
       
       {/* Tech Icons positioned around the scene */}
-      <TechIcon position={[-8, 4, -5]} color="#3776ab" delay={0}>
-        PY
-      </TechIcon>
-      
-      <TechIcon position={[8, -2, -3]} color="#e34c26" delay={1}>
-        HTML
-      </TechIcon>
-      
-      <TechIcon position={[-6, -4, 2]} color="#1572b6" delay={2}>
-        CSS
-      </TechIcon>
-      
-      <TechIcon position={[6, 6, -2]} color="#092e20" delay={3}>
-        DJ
-      </TechIcon>
-      
-      <TechIcon position={[-4, 2, 4]} color="#000000" delay={4}>
-        FL
-      </TechIcon>
-      
-      <TechIcon position={[4, -6, 3]} color="#0db7ed" delay={5}>
-        DOC
-      </TechIcon>
-      
-      <TechIcon position={[0, 8, -4]} color="#ff6c37" delay={6}>
-        API
-      </TechIcon>
+      <TechIcon position={[-8, 4, -5]} color="#3776ab" symbol="PY" delay={0} />
+      <TechIcon position={[8, -2, -3]} color="#e34c26" symbol="HTML" delay={1} />
+      <TechIcon position={[-6, -4, 2]} color="#1572b6" symbol="CSS" delay={2} />
+      <TechIcon position={[6, 6, -2]} color="#092e20" symbol="DJ" delay={3} />
+      <TechIcon position={[-4, 2, 4]} color="#000000" symbol="FL" delay={4} />
+      <TechIcon position={[4, -6, 3]} color="#0db7ed" symbol="DOC" delay={5} />
+      <TechIcon position={[0, 8, -4]} color="#ff6c37" symbol="API" delay={6} />
       
       <Environment preset="night" />
       <OrbitControls 
